@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<p>{{ valid_move }}</p>
+<form method="post">
+  <div class="row">
+    <div class="col">
+      <label for="fileFrom">From file</label>
+      <select class="form-control" id="fileFrom" name="fileFrom">
+        <option>a</option>
+        <option>b</option>
+        <option>c</option>
+        <option>d</option>
+        <option>e</option>
+        <option>f</option>
+        <option>g</option>
+        <option>h</option>
+      </select>
+    </div>
+    <div class="col">
+      <label for="rankFrom">From rank</label>
+      <select class="form-control" id="rankFrom" name="rankFrom">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <label for="fileTo">To file</label>
+      <select class="form-control" id="fileTo" name="fileTo">
+        <option>a</option>
+        <option>b</option>
+        <option>c</option>
+        <option>d</option>
+        <option>e</option>
+        <option>f</option>
+        <option>g</option>
+        <option>h</option>
+      </select>
+    </div>
+    <div class="col">
+      <label for="rankTo">To rank</label>
+      <select class="form-control" id="rankTo" name="rankTo">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+      </select>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}
