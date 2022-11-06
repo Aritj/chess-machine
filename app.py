@@ -2,7 +2,11 @@ from flask import Flask, render_template, redirect, url_for, request
 
 from validation import is_valid_move
 
-app = Flask(__name__)
+from controllers import ServoController
+
+app: Flask = Flask(__name__)
+
+controller: ServoController = ServoController()
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -14,7 +18,12 @@ def index() -> str:
         if not is_valid_move(request.form):
             return redirect(url_for('index'))
 
-        # Move according to the requested (and validated) move!
+        controller.move(
+            request.form.get("fileFrom"),
+            request.form.get("rankFrom"),
+            request.form.get("fileTo"),
+            request.form.get("rankTo")
+        )
 
         return redirect(url_for('index'))
 
