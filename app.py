@@ -6,8 +6,6 @@ from controllers import ServoController
 
 app: Flask = Flask(__name__)
 
-controller: ServoController = ServoController()
-
 
 @app.route('/', methods=['POST', 'GET'])
 def index() -> str:
@@ -18,12 +16,13 @@ def index() -> str:
         if not is_valid_move(request.form):
             return redirect(url_for('index'))
 
-        controller.move(
-            request.form.get("fileFrom"),
-            request.form.get("rankFrom"),
-            request.form.get("fileTo"),
-            request.form.get("rankTo")
-        )
+        with ServoController() as controller:
+            controller.move(
+                request.form.get("fileFrom"),
+                request.form.get("rankFrom"),
+                request.form.get("fileTo"),
+                request.form.get("rankTo")
+            )
 
         return redirect(url_for('index'))
 

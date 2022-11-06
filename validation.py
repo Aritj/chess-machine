@@ -1,9 +1,6 @@
 from sys import argv
 
-BOARD_STATE: dict[str, list[str]] = {
-    "file": ["a", "b", "c", "d", "e", "f", "g", "h"],
-    "rank": ["1", "2", "3", "4", "5", "6", "7", "8"]
-}
+from controllers import BOARD_STATE
 
 
 def is_valid_move(form: dict[str, str]) -> bool:
@@ -19,20 +16,6 @@ def is_valid_move(form: dict[str, str]) -> bool:
 
     return all([move_from.get(k) in v and move_to.get(k) in v
                 for k, v in BOARD_STATE.items()])
-
-
-def get_from_position(form: dict[str, str]) -> tuple:
-    return (
-        form.get("fileFrom"),
-        form.get("rankFrom")
-    )
-
-
-def get_to_position(form: dict[str, str]) -> tuple:
-    return (
-        form.get("fileTo"),
-        form.get("rankTo")
-    )
 
 
 if __name__ == "__main__":
