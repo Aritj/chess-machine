@@ -6,6 +6,33 @@ from controllers import ServoController
 
 app: Flask = Flask(__name__)
 
+@app.route('/chess', methods=['GET'])
+def chess() -> str:
+    return render_template('chess.html')
+
+@app.route('/move', methods=['POST'])
+def move():
+    source = request.args.get('Source')
+    target = request.args.get('Target')
+    piece = request.args.get('Piece')
+
+    form: dict[str, str] = {
+        "fileFrom": source[0],
+        "rankFrom": source[1],
+        "fileTo": target[0],
+        "rankTo": target[1],        
+    }
+
+    if is_valid_move(form):
+        with ServoController() as controller:
+            controller.move(
+                source[0],
+                source[1],
+                target[0],
+                target[1]
+            )
+    
+    return ""
 
 @app.route('/', methods=['POST', 'GET'])
 def index() -> str:
