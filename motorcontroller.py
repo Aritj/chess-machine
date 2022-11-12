@@ -1,9 +1,8 @@
 import RPi.GPIO as GPIO
+from time import sleep
+from datetime import datetime
+from random import shuffle
 
-BOARD_STATE: dict[str, list[str]] = {
-    "file": ["a", "b", "c", "d", "e", "f", "g", "h"],
-    "rank": ["1", "2", "3", "4", "5", "6", "7", "8"]
-}
 
 FILE_TO_X_MAP = {
     "a": 0,
@@ -36,23 +35,19 @@ START_POSITION = {
 }
 
 
-class ServoController:
+class StepperMotorController:
+    GPIO_LIST: list[int] = [12, 16, 18, 22]
+
     def __init__(self):
-        # https://www.youtube.com/watch?v=xHDT4CwjUQE&t=615s
-        # GPIO.setmode(GPIO.BOARD)
-        # GPIO.setup(11, GPIO.OUT)
-        # self.servo1 = GPIO.PWM(11, 50)
-        print("__init__")
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.GPIO_LIST, GPIO.OUT)
+        GPIO.output(self.GPIO_LIST, GPIO.LOW)
 
     def __enter__(self):
-        print("__enter__")
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        # TODO: implement GPIO clean-up
-        # self.servo1.stop()
-        # GPIO.cleanup()
-        print("__exit__")
+        GPIO.cleanup()
 
     def __position_x(self, x: int) -> None:
         # TODO: map file to x position and set
@@ -84,17 +79,37 @@ class ServoController:
         pass
 
     def move(self, file_from: str, rank_from: str, file_to: str, rank_to: str) -> None:
+        # self.test()
         print(f'MOVE |{file_from + rank_from}| TO |{file_to + rank_to}|')
+        pass
         self.__position_file_and_rank(file_from, rank_from)     # step 1
         self.__grab()                                           # step 2
         self.__position_file_and_rank(file_to, rank_to)         # step 3
         self.__release()                                        # step 4
         self.__position_reset()                                 # step 5
 
+    def test(self):
+        seq = [
+            [1, 0, 0, 0],
+            [1, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 1, 0],
+            [0, 0, 1, 0],
+            [0, 0, 1, 1],
+            [0, 0, 0, 1],
+            [1, 0, 0, 1]
+        ]
+
+        for _ in range(512):
+            for halfstep in range(8):
+                for pin in range(4):
+                    GPIO.output(self.GPIO_LIST[pin], seq[halfstep][pin])
+                sleep(0.001)
+
 
 if __name__ == "__main__":
     # for unit testing purposes
-    with ServoController() as controller:
+    with StepperMotorController() as controller:
         controller.move(
             "b", "1",
             "a", "3"
