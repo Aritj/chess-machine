@@ -1,53 +1,25 @@
-import RPi.GPIO as GPIO
+import pigpio
 from time import sleep
-from datetime import datetime
-from random import shuffle
-
-
-FILE_TO_X_MAP = {
-    "a": 0,
-    "b": 1,
-    "c": 2,
-    "d": 3,
-    "e": 4,
-    "f": 5,
-    "g": 6,
-    "h": 7,
-    "a": 8
-}
-
-RANK_TO_Y_MAP = {
-    "0": 0,
-    "1": 0,
-    "2": 0,
-    "3": 0,
-    "4": 0,
-    "5": 0,
-    "6": 0,
-    "7": 0,
-    "8": 8
-}
-
-START_POSITION = {
-    "x": 0,
-    "y": 0,
-    "z": 0
-}
 
 
 class StepperMotorController:
-    GPIO_LIST: list[int] = [12, 16, 18, 22]
+    PULSES = 800
+    DIR_PIN = 20
+    STEP_PIN = 21
 
     def __init__(self):
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(self.GPIO_LIST, GPIO.OUT)
-        GPIO.output(self.GPIO_LIST, GPIO.LOW)
+        self.pi = pigpio.pi()
+        self.pi.set_mode(self.DIR_PIN, pigpio.OUTPUT)
+        self.pi.set_mode(self.STEP_PIN, pigpio.OUTPUT)
+        self.pi.set_PWM_dutycycle(self.STEP_PIN, 128)  # PWM 1/2 On 1/2 Off
+        self.pi.set_PWM_frequency(self.STEP_PIN, self.PULSES)  # pulses per second
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        GPIO.cleanup()
+        self.pi.set_PWM_dutycycle(self.STEP_PIN, 0)  # PWM off
+        self.pi.stop()
 
     def __position_x(self, x: int) -> None:
         # TODO: map file to x position and set
@@ -62,13 +34,11 @@ class StepperMotorController:
         pass
 
     def __position_reset(self) -> None:
-        self.__position_x(START_POSITION.get("x"))
-        self.__position_y(START_POSITION.get("y"))
-        self.__position_z(START_POSITION.get("z"))
+        pass
 
     def __position_file_and_rank(self, file: str, rank: str) -> None:
-        self.__position_x(FILE_TO_X_MAP.get(file))
-        self.__position_y(RANK_TO_Y_MAP.get(rank))
+        
+        pass
 
     def __grab(self) -> None:
         # TODO: lower magnet, activate electro-magnet, lift magnet
@@ -79,7 +49,7 @@ class StepperMotorController:
         pass
 
     def move(self, file_from: str, rank_from: str, file_to: str, rank_to: str) -> None:
-        # self.test()
+        self.test(int(rank_from), int(rank_to))
         print(f'MOVE |{file_from + rank_from}| TO |{file_to + rank_to}|')
         pass
         self.__position_file_and_rank(file_from, rank_from)     # step 1
@@ -88,23 +58,9 @@ class StepperMotorController:
         self.__release()                                        # step 4
         self.__position_reset()                                 # step 5
 
-    def test(self):
-        seq = [
-            [1, 0, 0, 0],
-            [1, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 1, 0],
-            [0, 0, 1, 0],
-            [0, 0, 1, 1],
-            [0, 0, 0, 1],
-            [1, 0, 0, 1]
-        ]
-
-        for _ in range(512):
-            for halfstep in range(8):
-                for pin in range(4):
-                    GPIO.output(self.GPIO_LIST[pin], seq[halfstep][pin])
-                sleep(0.001)
+    def test(self, rank_from: int, rank_to: int):
+        for _ in range(abs(rank_from - rank_to)):
+            sleep(0.25)
 
 
 if __name__ == "__main__":
