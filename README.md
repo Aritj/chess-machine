@@ -60,6 +60,7 @@ And then issue the following commands:
 ```
 sudo systemctl enable pigpiod
 sudo systemctl start pigpiod
+sudo systemctl status pigpiod
 ```
 
 Requirements are now completed!
