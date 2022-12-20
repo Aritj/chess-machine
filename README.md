@@ -1,8 +1,7 @@
 # chess-machine
 How to clone this repository and install the Python requirements and run the program:
 ```
-sudo apt update && sudo apt upgrade -y
-sudo apt install git python3-pip -y
+sudo apt update && sudo apt upgrade -y && sudo apt install git python3-pip -y
 git clone https://github.com/Aritj/chess-machine.git
 pip3 install -r chess-machine/requirements.txt
 ```
