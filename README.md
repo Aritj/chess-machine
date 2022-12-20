@@ -1,14 +1,20 @@
 # chess-machine
+How to clone this repository and install the Python requirements and run the program:
 ```
-sudo apt install git python3-pip -y
+sudo apt update && sudo apt upgrade -y && sudo apt install git python3-pip -y
 git clone https://github.com/Aritj/chess-machine.git
 pip3 install -r chess-machine/requirements.txt
+```
+
+Please make sure you've completed the prerequisites before running the application!
+```
 python3 chess-machine/app.py
 ```
 
 # Prerequisites
-[Pigpiod](https://abyz.me.uk/rpi/pigpio/download.html)
-[Pigpiod.service (RPi)](https://forums.raspberrypi.com/viewtopic.php?t=319761)
+Link to [Pigpiod](https://abyz.me.uk/rpi/pigpio/download.html).
+
+Link to [pigpiod.service (RPi forum)](https://forums.raspberrypi.com/viewtopic.php?t=319761#p1916221).
 
 ## Pigpiod
 Download and install pigpiod:
@@ -25,7 +31,14 @@ If the Python part of the install fails it may be because you need the setup too
 sudo apt install python-setuptools python3-setuptools
 ```
 
-Create the following file (if it does not exist already):
+And then issue the following commands:
+```
+sudo systemctl enable pigpiod
+sudo systemctl start pigpiod
+sudo systemctl status pigpiod
+```
+
+If you get an error ("Failed to enable unit: Unit file pigpiod.service does not exist.") create the following file:
 ```
 sudo nano /lib/systemd/system/pigpiod.service
 ```
@@ -49,3 +62,4 @@ sudo systemctl start pigpiod
 sudo systemctl status pigpiod
 ```
 
+Requirements are now completed!
