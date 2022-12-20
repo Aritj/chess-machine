@@ -36,7 +36,7 @@ class StepperMotor:
         self.pi.stop()
 
 class StepperMotorController:
-    __SCALING_VARIABLE: int = 2
+    __SCALING_VARIABLE: int = 6
     __motors: list[StepperMotor] = []
     __current_file: int = 0
     __current_rank: int = 0
