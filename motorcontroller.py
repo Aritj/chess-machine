@@ -1,5 +1,7 @@
 import pigpio
+
 from time import sleep
+from concurrent.futures import ThreadPoolExecutor
 
 FILE_MAP = {
     "a": 1,
@@ -34,7 +36,7 @@ class StepperMotor:
         self.pi.stop()
 
 class StepperMotorController:
-    __SCALING_VARIABLE: int = 4
+    __SCALING_VARIABLE: int = 2
     __motors: list[StepperMotor] = []
     __current_file: int = 0
     __current_rank: int = 0
@@ -60,12 +62,12 @@ class StepperMotorController:
         file_rotations: int = (file - self.__current_file) * self.__SCALING_VARIABLE
         rank_rotations: int = (rank - self.__current_rank) * self.__SCALING_VARIABLE
 
-        self.__file_motor.rotate(file_rotations)
-        #self.__rank_motor.rotate(rank_rotations)
+        with ThreadPoolExecutor(max_workers = 2) as executor:
+            executor.map(self.__file_motor.rotate, (file_rotations,))
+            #self.__rank_motor.rotate(rank_rotations)
 
         self.__current_file = file
         self.__current_rank = rank
-
 
     def __grab(self) -> None:
         # TODO: activate electro-magnet
@@ -75,10 +77,20 @@ class StepperMotorController:
         # TODO: deactivate electro-magnet
         sleep(0.5)
 
-    def move(self, file_from: str, rank_from: str, file_to: str, rank_to: str) -> None:
-        self.__position_file_and_rank(FILE_MAP.get(file_from), int(rank_from))
+    def move(self, move: dict) -> None:
+        file_from: str = move.get("source")[0]          # a-h (str)
+        rank_from: str = move.get("source")[1]          # 1-8 (str)
+        file_to: str = move.get("target")[0]            # a-h (str)
+        rank_to: str = move.get("target")[1]            # 1-8 (str)
+
+        file_from_mapped: int = FILE_MAP.get(file_from) # 1-8 (int)
+        rank_from_mapped: int = int(rank_from)          # 1-8 (int)
+        file_to_mapped: int = FILE_MAP.get(file_to)     # 1-8 (int)
+        rank_to_mapped: int = int(rank_to)              # 1-8 (int)
+
+        self.__position_file_and_rank(file_from_mapped, rank_from_mapped)
         self.__grab()
-        self.__position_file_and_rank(FILE_MAP.get(file_to), int(rank_to))
+        self.__position_file_and_rank(file_to_mapped, rank_to_mapped)
         self.__release()
         self.__position_reset()
 
@@ -86,9 +98,6 @@ if __name__ == "__main__":
     # for unit testing purposes
     with StepperMotorController() as controller:
         controller.move(
-            "a", "1",
-            "d", "2"
+            "b", "1",
+            "c", "3"
         )
-    #motor = StepperMotor(20, 21)
-    #motor.rotate(-30)
-    #motor.close()

@@ -21,15 +21,38 @@
 </div>
 
 <script>
+  var queue = [];
+  var running = false;
+
+  setInterval(function() {
+   if (! running && queue.length > 0) {
+    move(queue.shift())
+   }
+  }, 1000);
+
+  function move(move) {
+    running = true;
+
+    $.ajax({
+      url: 'move',
+      data: JSON.stringify(move),
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      method: 'POST',
+      complete: function () {
+        running = false;
+      }
+    });
+  }
+
   function onDrop(source, target, piece, newPos, oldPos, orientation) {
     if (source != target) {
-      $.ajax({
-        url: 'move?' + $.param({
-          fileFrom: source[0], rankFrom: source[1],
-          fileTo: target[0], rankTo: target[1],
-          Piece: piece
-        }), method: 'POST'
-      });
+      queue.push({"source": source,
+       "target": target,
+       "piece": piece,
+       "newPos": newPos,
+       "oldPos": oldPos,
+       "orientation": orientation});
     }
   }
 
