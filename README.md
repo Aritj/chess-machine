@@ -1,18 +1,21 @@
 # chess-machine
 How to clone this repository and install the Python requirements and run the program:
 ```
+sudo apt update && sudo apt upgrade -y
 sudo apt install git python3-pip -y
 git clone https://github.com/Aritj/chess-machine.git
 pip3 install -r chess-machine/requirements.txt
-python3 chess-machine/app.py
 ```
 
 Please make sure you've completed the prerequisites before running the application!
+```
+python3 chess-machine/app.py
+```
 
 # Prerequisites
 Link to [Pigpiod](https://abyz.me.uk/rpi/pigpio/download.html).
 
-Link to [pigpiod.service (RPi forum)](https://forums.raspberrypi.com/viewtopic.php?t=319761).
+Link to [pigpiod.service (RPi forum)](https://forums.raspberrypi.com/viewtopic.php?t=319761#p1916221).
 
 ## Pigpiod
 Download and install pigpiod:
