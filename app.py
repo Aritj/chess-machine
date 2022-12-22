@@ -11,6 +11,7 @@ def move() -> str:
         controller.move(loads(request.data))
     return '', 204
 
+
 @app.route('/', methods=['GET'])
 def index() -> str:
     return render_template('index.html')
