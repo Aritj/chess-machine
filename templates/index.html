@@ -17,6 +17,7 @@
 </div>
 
 <script>
+  var queue_checking_interval_in_ms = 100
   var queue = [];
   var running = false;
 
@@ -24,7 +25,7 @@
     if (! running && queue.length > 0) {
       move(queue.shift());
     }
-  }, 1000);
+  }, queue_checking_interval_in_ms);
 
   function move(move) {
     running = true;

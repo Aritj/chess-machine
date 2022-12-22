@@ -8,7 +8,7 @@ app: Flask = Flask(__name__)
 def move() -> str:
     with StepperMotorController() as controller:
         controller.move(loads(request.data))
-    return "", 200
+    return "", 204
 
 @app.route('/', methods=['GET'])
 def index() -> str:
