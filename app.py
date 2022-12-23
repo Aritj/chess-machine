@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from motorcontroller import StepperMotorController
+from controller import Controller
 from json import loads
 
 app: Flask = Flask(__name__)
@@ -7,7 +7,7 @@ app: Flask = Flask(__name__)
 
 @app.route('/move', methods=['POST'])
 def move() -> str:
-    with StepperMotorController() as controller:
+    with Controller() as controller:
         controller.move(loads(request.data))
     return '', 204
 
