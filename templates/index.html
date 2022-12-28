@@ -12,9 +12,21 @@
 {% endblock %}
 
 {% block content %}
-<div class="h-100 d-flex justify-content-center align-items-center">
+<div class="d-flex justify-content-center align-items-center">
   <div id="myBoard" style="width: 700px"></div>
+  <button id="resetButton" type="submit" class="btn btn-primary" onclick="reset()">Recalibrate motors</button>
 </div>
+
+<script>
+  function reset() {
+    queue = [] // clear queued moves
+
+    $.ajax({
+      url: 'reset',
+      method: 'GET'
+    });
+  }
+</script>
 
 <script>
   var queue_checking_interval_in_ms = 100

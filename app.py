@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, redirect, url_for, request
 from controller import Controller
 from json import loads
 
@@ -11,6 +11,11 @@ def move() -> str:
         controller.move(loads(request.data))
     return '', 204
 
+@app.route('/reset', methods=['GET'])
+def reset() -> str:
+    with Controller() as controller:
+        controller.reset()
+    return redirect(url_for('index'))
 
 @app.route('/', methods=['GET'])
 def index() -> str:
