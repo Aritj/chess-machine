@@ -2,7 +2,7 @@ from pigpio import pi, OUTPUT, HIGH, LOW
 
 from time import sleep
 
-class Magnet:
+class ElectroMagnet:
     def __init__(self, sig_pin):
         self.__SIG_PIN = sig_pin
         self.__PI = pi()

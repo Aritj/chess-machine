@@ -21,6 +21,10 @@ def reset() -> str:
 def index() -> str:
     return render_template('index.html')
 
+@app.route('/test', methods=['GET'])
+def test() -> str:
+    return render_template('test.html')
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

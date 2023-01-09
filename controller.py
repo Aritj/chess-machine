@@ -1,7 +1,7 @@
-import objects
-
 from time import sleep
 from concurrent.futures import ThreadPoolExecutor
+from objects import StepperMotor, ElectroMagnet
+
 
 FILE_MAP = {
     "a": 1,
@@ -20,26 +20,22 @@ class Controller:
     __current_rank: int = 0
 
     def __init__(self):
-        #self.__SERVO_MOTOR = objects.ServoMotor(12)
-        self.__FILE_MOTOR = objects.StepperMotor(5, 6)
-        self.__RANK_MOTOR = objects.StepperMotor(20, 21)
-        self.__MAGNET = objects.Magnet(9)
+        self.__FILE_MOTOR = StepperMotor(5, 6)
+        self.__RANK_MOTOR = StepperMotor(20, 21)
+        self.__MAGNET = ElectroMagnet(9)
         self.__set_motor_scale(self.__scaling_factor)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        #self.__SERVO_MOTOR.close()
         self.__FILE_MOTOR.close()
         self.__RANK_MOTOR.close()
         self.__MAGNET.close()
 
-    def close(self) -> None:
-        self.__exit__
-
     def reset(self) -> None:
-        MAX_ROTATIONS_FOR_BOARD = 60
+        '''Resets the gantry system position.'''
+        MAX_ROTATIONS_FOR_BOARD = 57
 
         self.__set_motor_scale(1)
 
@@ -58,9 +54,9 @@ class Controller:
         self.__set_motor_scale(self.__scaling_factor)
 
     def __set_motor_scale(self, scaling_factor: float):
+        '''Sets the scaling factor for the rank and file motors.'''
         for motor in [self.__FILE_MOTOR, self.__RANK_MOTOR]:
             motor.set_scale(scaling_factor)
-
 
     def __position_reset(self) -> None:
         '''This function will undo any stored movement.'''
@@ -69,16 +65,15 @@ class Controller:
             executor.map(self.__RANK_MOTOR.rotate, (-self.__current_rank,))
         sleep(1)
 
-
-    def __get_rank_and_file_from_position(self, position: str) -> tuple:
-        '''Maps a chess position to a tuple of two integers.
+    def __to_cartesian_position(self, chess_position: str) -> tuple:
+        '''Maps a chess position to a tuple of two integers (x, y).
         E.g., "a1" to (1,1) and "b2" to (2,2) and "e8" to (5,8).'''
-        return (FILE_MAP.get(position[0]), int(position[1]))
+        return (FILE_MAP.get(chess_position[0]), int(chess_position[1]))
 
     def __position_file_and_rank(self, position: str) -> None:
         '''Takes in a chess position, e.g., "b1" and rotates the rank and file motors 
         to place the electromagnet under the given position.'''
-        FILE, RANK = self.__get_rank_and_file_from_position(position)
+        FILE, RANK = self.__to_cartesian_position(position)
         FILE_ROTATIONS: int = (FILE - self.__current_file)
         RANK_ROTATIONS: int = (RANK - self.__current_rank)
 
@@ -93,15 +88,14 @@ class Controller:
 
     def __grab(self) -> None:
         '''Grabs the chess piece.'''
-        #self.__SERVO_MOTOR.max()
         self.__MAGNET.activate()
 
     def __release(self) -> None:
         '''Releases the chess piece.'''
-        #self.__SERVO_MOTOR.min()
         self.__MAGNET.deactivate()
 
     def move(self, move: dict) -> None:
+        print(move)
         '''Takes in a chess move as a dictionary, e.g., {"source": b1, "target": c3} and performs the move'''
         self.__position_file_and_rank(move.get("source"))
         self.__grab()
@@ -114,23 +108,5 @@ if __name__ == "__main__":
     # for unit testing purposes
     move_to_perform: dict = {"source": "c3", "target": "h8"}
 
-    # with Controller() as controller:
-    #    controller.move(move_to_perform)
-
-    motor1 = objects.StepperMotor(5,6)
-    motor2 = objects.StepperMotor(20,21)
-
-    scale = 1
-    rotations = 1
-
-    for motor in [motor1, motor2]:
-        motor.set_scale(scale)
-
-    with ThreadPoolExecutor(max_workers = 2) as executor:
-        executor.map(motor1.rotate, (rotations,))
-        executor.map(motor2.rotate, (rotations,))
-
-    sleep(1)
-
-    motor1.close()
-    motor2.close()
+    with Controller() as controller:
+        controller.move(move_to_perform)
