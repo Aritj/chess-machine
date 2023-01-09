@@ -95,7 +95,6 @@ class Controller:
         self.__MAGNET.deactivate()
 
     def move(self, move: dict) -> None:
-        print(move)
         '''Takes in a chess move as a dictionary, e.g., {"source": b1, "target": c3} and performs the move'''
         self.__position_file_and_rank(move.get("source"))
         self.__grab()
