@@ -31,12 +31,20 @@ If the Python part of the install fails it may be because you need the setup too
 sudo apt install python-setuptools python3-setuptools
 ```
 
+Check if pigpiod is running:
+```
+sudo systemctl status pigpiod
+```
+
+And if not, then run pigpiod:
+```
+sudo systemctl start pigpiod
+```
+
 ## Run pigpiod on startup
 Issue the following commands:
 ```
 sudo systemctl enable pigpiod
-sudo systemctl start pigpiod
-sudo systemctl status pigpiod
 ```
 
 If you get the error ("Failed to enable unit: Unit file pigpiod.service does not exist."), then create the following file:
@@ -64,8 +72,6 @@ WantedBy=multi-user.target
 And then issue the following commands:
 ```
 sudo systemctl enable pigpiod
-sudo systemctl start pigpiod
-sudo systemctl status pigpiod
 ```
 
 Requirements are now completed!
