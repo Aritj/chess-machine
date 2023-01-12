@@ -12,7 +12,7 @@ python3 chess-machine/app.py
 ```
 
 # Prerequisites
-Link to [Pigpiod](https://abyz.me.uk/rpi/pigpio/download.html).
+Link to [pigpio](https://abyz.me.uk/rpi/pigpio/download.html).
 
 Link to [pigpiod.service (RPi forum)](https://forums.raspberrypi.com/viewtopic.php?t=319761#p1916221).
 
