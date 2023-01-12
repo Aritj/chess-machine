@@ -31,16 +31,6 @@ If the Python part of the install fails it may be because you need the setup too
 sudo apt install python-setuptools python3-setuptools
 ```
 
-Check if pigpiod is running:
-```
-sudo systemctl status pigpiod
-```
-
-And if not, then run pigpiod:
-```
-sudo systemctl start pigpiod
-```
-
 ## Run pigpiod on startup
 Issue the following commands:
 ```
