@@ -35,7 +35,7 @@ class Controller:
 
     def reset(self) -> None:
         '''Resets the gantry system position.'''
-        MAX_ROTATIONS_FOR_BOARD = 57
+        MAX_ROTATIONS_FOR_BOARD = 60
 
         self.__set_motor_scale(1)
 
@@ -46,9 +46,9 @@ class Controller:
         sleep(1)
 
         with ThreadPoolExecutor(max_workers=2) as executor:
-            executor.map(self.__FILE_MOTOR.rotate, (1,))
-            executor.map(self.__RANK_MOTOR.rotate, (1,))
-        
+            executor.map(self.__FILE_MOTOR.rotate, (7,))
+            executor.map(self.__RANK_MOTOR.rotate, (3.5,))    
+
         sleep(1)
 
         self.__set_motor_scale(self.__scaling_factor)
@@ -68,7 +68,7 @@ class Controller:
     def __to_cartesian_position(self, chess_position: str) -> tuple:
         '''Maps a chess position to a tuple of two integers (x, y).
         E.g., "a1" to (1,1) and "b2" to (2,2) and "e8" to (5,8).'''
-        return (FILE_MAP.get(chess_position[0]), int(chess_position[1]))
+        return (FILE_MAP.get(chess_position[0])-1, int(chess_position[1])-1)
 
     def __position_file_and_rank(self, position: str) -> None:
         '''Takes in a chess position, e.g., "b1" and rotates the rank and file motors 
@@ -105,7 +105,7 @@ class Controller:
 
 if __name__ == "__main__":
     # for unit testing purposes
-    move_to_perform: dict = {"source": "c3", "target": "h8"}
+    move_to_perform: dict = {"source": "a1", "target": "a2"}
 
     with Controller() as controller:
         controller.move(move_to_perform)
